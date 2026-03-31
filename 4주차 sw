@@ -1,0 +1,23 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#다운로드 받은 CSV 파일을 DataFrame 객체로 읽어들인다.
+df = pd.read_csv('human.csv')
+
+#컬럼들 중에서 일반가구원을 제외한 나머지 컬럼들을 모두 삭제한다.
+df = df.iloc[:, :5]
+
+df = df[df['시점'] >= 2015]
+#2015년 이후로 자료가 제공되는 최대 기간의 남자 및 여자의 연도별 일반가구원 데이터 통계롤 최종적으로 출력한다.
+df = df[df['성별'].isin(['남자', '여자'])]
+df_final = df.pivot_table(index='시점', columns='성별', values='일반가구원', aggfunc='sum')
+print(df_final)
+#2015년 이후로 자료가 제공되는 최대 기간의 연령별 일반가구원 데이터 통계롤 최종적으로 출력한다.
+df = df[df['연령별'].isin(['15세미만','15~19세','20~24세','25~29세','30~34세','35~39세','40~44세','45~49세','50~54세','55~59세','60~64세','65~69세','70~74세','75~79세''80~84세','85세이상'])]
+df_age = df.pivot_table(index='연령별', columns='성별', values='일반가구원', aggfunc='sum')
+print(df_age)
+
+#2015년 이후로 자료가 제공되는 최대 기간의 남자 및 여자의 연령별 일반가구원 데이터 통계를 꺽은선 그래프로 표현한다.
+plot1=plt.plot(df_final.index, df_final['남자'], color='b')
+plot1=plt.plot(df_final.index, df_final['여자'], color='r')
+plt.show()
